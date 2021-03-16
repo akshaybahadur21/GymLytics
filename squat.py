@@ -1,5 +1,4 @@
 import mediapipe as mp
-from mediapipe.python.solutions.drawing_utils import _normalized_to_pixel_coordinates
 
 from ThreadedCamera import ThreadedCamera
 from utils import *
@@ -17,8 +16,6 @@ VISIBILITY_THRESHOLD = 0.5
 scount = 0
 performedSquat = False
 
-ang1, ang2, eang1, eang2 = 0, 0, 0, 0
-idx_to_coordinates = {26: (0, 0), 25: (0, 0), 14: (0, 0), 13: (0, 0)}
 
 while True:
     success, image = threaded_camera.show_frame()

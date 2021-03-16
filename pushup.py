@@ -16,9 +16,6 @@ VISIBILITY_THRESHOLD = 0.5
 scount = 0
 performedPushUp = False
 
-ang1, ang2, eang1, eang2 = 0, 0, 0, 0
-idx_to_coordinates = {26: (0, 0), 25: (0, 0), 14: (0, 0), 13: (0, 0)}
-
 while True:
     success, image = threaded_camera.show_frame()
     if not success or image is None:
@@ -71,10 +68,10 @@ while True:
         if 12 in idx_to_coordinates and 14 in idx_to_coordinates and 16 in idx_to_coordinates:  # left side of body
             cv2.line(image, (idx_to_coordinates[12]), (idx_to_coordinates[14]), thickness=4, color=(255, 0, 255))
             cv2.line(image, (idx_to_coordinates[14]), (idx_to_coordinates[16]), thickness=4, color=(255, 0, 255))
-
             l1 = np.linspace(idx_to_coordinates[12], idx_to_coordinates[14], 100)
             l2 = np.linspace(idx_to_coordinates[14], idx_to_coordinates[16], 100)
-            ang1 = ang((idx_to_coordinates[12], idx_to_coordinates[14]), (idx_to_coordinates[14], idx_to_coordinates[16]))
+            ang1 = ang((idx_to_coordinates[12], idx_to_coordinates[14]),
+                       (idx_to_coordinates[14], idx_to_coordinates[16]))
             cv2.putText(image, "   " + str(round(ang1, 2)), (idx_to_coordinates[14]),
                         fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                         fontScale=0.6, color=(0, 255, 0), thickness=2)
@@ -90,6 +87,42 @@ while True:
             eang1 = ang((idx_to_coordinates[11], idx_to_coordinates[13]),
                         (idx_to_coordinates[13], idx_to_coordinates[15]))
             cv2.putText(image, str(round(eang1, 2)), (idx_to_coordinates[13]),
+                        fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                        fontScale=0.6, color=(0, 255, 0), thickness=2)
+            center, radius, start_angle, end_angle = convert_arc(l1[80], l2[20], sagitta=15)
+            axes = (radius, radius)
+            draw_ellipse(image, center, axes, -1, start_angle, end_angle, 255)
+
+    except:
+        pass
+
+    try:
+        # elbow - wrist - horizontal ground
+        if 14 in idx_to_coordinates and 16 in idx_to_coordinates:  # left side of body
+            cv2.line(image, (idx_to_coordinates[14]), (idx_to_coordinates[16]), thickness=4, color=(255, 0, 255))
+            cv2.line(image, (idx_to_coordinates[16]), (idx_to_coordinates[16][0] + 80, idx_to_coordinates[16][1]),
+                     thickness=4, color=(255, 0, 255))
+            l1 = np.linspace(idx_to_coordinates[14], idx_to_coordinates[16], 100)
+            temp = (idx_to_coordinates[16][0] + 80, idx_to_coordinates[16][1])
+            l2 = np.linspace(idx_to_coordinates[16], temp, 100)
+            ang1 = ang((idx_to_coordinates[14], idx_to_coordinates[16]),
+                       (idx_to_coordinates[16], temp))
+            cv2.putText(image, "   " + str(round(ang1, 2)), (idx_to_coordinates[16]),
+                        fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                        fontScale=0.6, color=(0, 255, 0), thickness=2)
+            center, radius, start_angle, end_angle = convert_arc(l1[80], l2[20], sagitta=15)
+            axes = (radius, radius)
+            draw_ellipse(image, center, axes, -1, start_angle, end_angle, 255)
+        else:  # right side of body
+            cv2.line(image, (idx_to_coordinates[13]), (idx_to_coordinates[15]), thickness=4, color=(255, 0, 255))
+            cv2.line(image, (idx_to_coordinates[15]), (idx_to_coordinates[15][0] + 80, idx_to_coordinates[15][1]),
+                     thickness=4, color=(255, 0, 255))
+            l1 = np.linspace(idx_to_coordinates[14], idx_to_coordinates[15], 100)
+            temp = (idx_to_coordinates[15][0] + 80, idx_to_coordinates[15][1])
+            l2 = np.linspace(idx_to_coordinates[15], temp, 100)
+            ang1 = ang((idx_to_coordinates[14], idx_to_coordinates[15]),
+                       (idx_to_coordinates[15], temp))
+            cv2.putText(image, "   " + str(round(ang1, 2)), (idx_to_coordinates[15]),
                         fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                         fontScale=0.6, color=(0, 255, 0), thickness=2)
             center, radius, start_angle, end_angle = convert_arc(l1[80], l2[20], sagitta=15)

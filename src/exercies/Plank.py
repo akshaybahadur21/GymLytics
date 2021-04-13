@@ -1,7 +1,7 @@
 import mediapipe as mp
 from src.ThreadedCamera import ThreadedCamera
 from src.exercies.Exercise import Exercise
-
+import time
 from src.utils import *
 
 mp_drawing = mp.solutions.drawing_utils
@@ -22,13 +22,14 @@ class Plank(Exercise):
 
     def exercise(self, source):
         threaded_camera = ThreadedCamera(source)
-        scount = 0
+        eang1 = 0
+        plankTimer = None
+        plankDuration = 0
         while True:
             success, image = threaded_camera.show_frame()
             if not success or image is None:
                 continue
             image = cv2.flip(image, 1)
-            image_orig = cv2.flip(image, 1)
             image = cv2.cvtColor(cv2.flip(image, 1), cv2.COLOR_BGR2RGB)
             results = pose.process(image)
             image.flags.writeable = True
@@ -40,105 +41,50 @@ class Plank(Exercise):
             idx_to_coordinates = get_idx_to_coordinates(image, results)
             try:
                 # shoulder - back - ankle
-                if 12 in idx_to_coordinates and 24 in idx_to_coordinates and 28 in idx_to_coordinates:  # left side of body
-                    cv2.line(image, (idx_to_coordinates[12]), (idx_to_coordinates[24]), thickness=4,
-                             color=(255, 0, 255))
-                    cv2.line(image, (idx_to_coordinates[24]), (idx_to_coordinates[28]), thickness=4,
-                             color=(255, 0, 255))
-                    l1 = np.linspace(idx_to_coordinates[12], idx_to_coordinates[24], 100)
-                    l2 = np.linspace(idx_to_coordinates[24], idx_to_coordinates[28], 100)
-                    eang1 = ang((idx_to_coordinates[12], idx_to_coordinates[24]),
-                                (idx_to_coordinates[24], idx_to_coordinates[28]))
-                    cv2.putText(image, str(round(eang1, 2)), (idx_to_coordinates[24]),
-                                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                                fontScale=0.6, color=(0, 255, 0), thickness=2)
-                    center, radius, start_angle, end_angle = convert_arc(l1[80], l2[20], sagitta=15)
-                    axes = (radius, radius)
-                    draw_ellipse(image, center, axes, -1, start_angle, end_angle, 255)
-
-                else:  # right side of body
-                    cv2.line(image, (idx_to_coordinates[11]), (idx_to_coordinates[23]), thickness=4,
-                             color=(255, 0, 255))
-                    cv2.line(image, (idx_to_coordinates[23]), (idx_to_coordinates[27]), thickness=4,
-                             color=(255, 0, 255))
-                    l1 = np.linspace(idx_to_coordinates[11], idx_to_coordinates[23], 100)
-                    l2 = np.linspace(idx_to_coordinates[23], idx_to_coordinates[27], 100)
+                if 11 in idx_to_coordinates and 23 in idx_to_coordinates and 27 in idx_to_coordinates:  # left side of body
+                    cv2.line(image, (idx_to_coordinates[11]), (idx_to_coordinates[23]), thickness=6,
+                             color=(255, 0, 0))
+                    cv2.line(image, (idx_to_coordinates[23]), (idx_to_coordinates[27]), thickness=6,
+                             color=(255, 0, 0))
                     eang1 = ang((idx_to_coordinates[11], idx_to_coordinates[23]),
                                 (idx_to_coordinates[23], idx_to_coordinates[27]))
-                    cv2.putText(image, str(round(eang1, 2)), (idx_to_coordinates[23]),
+                    cv2.putText(image, str(round(eang1, 2)),
+                                (idx_to_coordinates[23][0] - 40, idx_to_coordinates[23][1] - 50),
                                 fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                                fontScale=0.6, color=(0, 255, 0), thickness=2)
-                    center, radius, start_angle, end_angle = convert_arc(l1[80], l2[20], sagitta=15)
-                    axes = (radius, radius)
-                    draw_ellipse(image, center, axes, -1, start_angle, end_angle, 255)
+                                fontScale=0.8, color=(0, 255, 0), thickness=3)
+                    cv2.circle(image, (idx_to_coordinates[11]), 10, (0, 0, 255), cv2.FILLED)
+                    cv2.circle(image, (idx_to_coordinates[11]), 15, (0, 0, 255), 2)
+                    cv2.circle(image, (idx_to_coordinates[23]), 10, (0, 0, 255), cv2.FILLED)
+                    cv2.circle(image, (idx_to_coordinates[23]), 15, (0, 0, 255), 2)
+                    cv2.circle(image, (idx_to_coordinates[27]), 10, (0, 0, 255), cv2.FILLED)
+                    cv2.circle(image, (idx_to_coordinates[27]), 15, (0, 0, 255), 2)
             except:
                 pass
 
             try:
-                pass
-                # # shoulder - ankle - Elbow
-                if 12 in idx_to_coordinates and 28 in idx_to_coordinates and 14 in idx_to_coordinates:  # left side of body
-                    cv2.line(image, (idx_to_coordinates[12]), (idx_to_coordinates[28]), thickness=4,
-                             color=(255, 0, 255))
-                    cv2.line(image, (idx_to_coordinates[28]), (idx_to_coordinates[14]), thickness=4,
-                             color=(255, 0, 255))
 
-                    l1 = np.linspace(idx_to_coordinates[12], idx_to_coordinates[28], 100)
-                    l2 = np.linspace(idx_to_coordinates[28], idx_to_coordinates[14], 100)
-                    ang1 = ang((idx_to_coordinates[12], idx_to_coordinates[28]),
-                               (idx_to_coordinates[28], idx_to_coordinates[14]))
-                    cv2.putText(image, "   " + str(round(ang1, 2)), (idx_to_coordinates[28]),
-                                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                                fontScale=0.6, color=(0, 255, 0), thickness=2)
-                    center, radius, start_angle, end_angle = convert_arc(l1[80], l2[20], sagitta=15)
-                    axes = (radius, radius)
-                    draw_ellipse(image, center, axes, -1, start_angle, end_angle, 255)
-
-                else:  # right side of body
-                    cv2.line(image, (idx_to_coordinates[11]), (idx_to_coordinates[27]), thickness=4,
-                             color=(255, 0, 255))
-                    cv2.line(image, (idx_to_coordinates[27]), (idx_to_coordinates[13]), thickness=4,
-                             color=(255, 0, 255))
-                    l1 = np.linspace(idx_to_coordinates[11], idx_to_coordinates[27], 100)
-                    l2 = np.linspace(idx_to_coordinates[27], idx_to_coordinates[13], 100)
-                    eang1 = ang((idx_to_coordinates[11], idx_to_coordinates[27]),
-                                (idx_to_coordinates[27], idx_to_coordinates[13]))
-                    cv2.putText(image, str(round(eang1, 2)), (idx_to_coordinates[27]),
-                                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                                fontScale=0.6, color=(0, 255, 0), thickness=2)
-                    center, radius, start_angle, end_angle = convert_arc(l1[80], l2[20], sagitta=15)
-                    axes = (radius, radius)
-                    draw_ellipse(image, center, axes, -1, start_angle, end_angle, 255)
-
-            except:
-                pass
-
-            try:
-                # Count Number of Pushups
-                if 12 in idx_to_coordinates:
-                    shoulder_coord = idx_to_coordinates[12]
+                if eang1 > 170:
+                    if plankTimer == None:
+                        plankTimer = time.time()
+                    plankDuration += time.time() - plankTimer
+                    plankTimer = time.time()
                 else:
-                    shoulder_coord = idx_to_coordinates[11]
-
-                if 16 in idx_to_coordinates:
-                    ankle_coord = idx_to_coordinates[16]
-                else:
-                    ankle_coord = idx_to_coordinates[15]
-
-                if abs(shoulder_coord[1] - ankle_coord[1]) < 300:
-                    performedPushUp = True
-                if abs(shoulder_coord[1] - ankle_coord[1]) > 300 and performedPushUp:
-                    scount += 1
-                    performedPushUp = False
+                    plankTimer = None
+                bar = np.interp(eang1, (120, 170), (850, 300))
+                per = np.interp(eang1, (120, 170), (0, 100))
+                cv2.rectangle(image, (200, 300), (260, 850), (0, 255, 0))
+                cv2.rectangle(image, (200, int(bar)), (260, 850), (0, 255, 0), cv2.FILLED)
+                cv2.putText(image, f'{int(per)} %', (200, 255), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                            fontScale=1.1, color=(0, 255, 0), thickness=4)
 
             except:
                 pass
             if 0 in idx_to_coordinates:
-                cv2.putText(image, "Count : " + str(scount),
-                            (idx_to_coordinates[0][0] - 60, idx_to_coordinates[0][1] - 140),
+                cv2.putText(image, "Plank Timer : " + str(round(plankDuration / 2)) + " sec",
+                            (idx_to_coordinates[0][0] - 60, idx_to_coordinates[0][1] - 240),
                             fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                            fontScale=0.9, color=(0, 0, 0), thickness=2)
-            cv2.imshow('Image', rescale_frame(image, percent=100))
+                            fontScale=0.9, color=(0, 255, 0), thickness=4)
+            cv2.imshow('Image', rescale_frame(image, percent=150))
             if cv2.waitKey(5) & 0xFF == 27:
                 break
         pose.close()

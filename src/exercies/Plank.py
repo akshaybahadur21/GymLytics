@@ -80,7 +80,7 @@ class Plank(Exercise):
             except:
                 pass
             if 0 in idx_to_coordinates:
-                cv2.putText(image, "Plank Timer : " + str(round(plankDuration / 2)) + " sec",
+                cv2.putText(image, "Plank Timer : " + str(round(plankDuration)) + " sec",
                             (idx_to_coordinates[0][0] - 60, idx_to_coordinates[0][1] - 240),
                             fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                             fontScale=0.9, color=(0, 255, 0), thickness=4)

@@ -13,7 +13,7 @@ It is performed for various reasons, to aid growth and improve strength, prevent
 
 ### Python  Implementation
 
-Supported Exercise types
+**Supported Exercise types**
 
 -  Pushup
 -  Squat
@@ -21,7 +21,7 @@ Supported Exercise types
 -  Shoulder Taps
 -  Plank
 
-Source
+**Source**
 - '0' for webcam
 - Any other source for a prerecorded video
 

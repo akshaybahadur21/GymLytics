@@ -33,7 +33,7 @@ If you face any problem, kindly raise an issue
 
 1) First, record the exercise you want to perform analytics on; or you can setup your webcam so that it can stream your exercise in runtime.
 2) Select the type of exercise you want to perform. (Look above for the supported exercises)
-3) Run the `GymLyitcs.py` file with your current configuration
+3) Run the `GymLytics.py` file with your current configuration
 
 ## Execution 🐉
 

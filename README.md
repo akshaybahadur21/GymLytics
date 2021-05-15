@@ -35,7 +35,7 @@ If you face any problem, kindly raise an issue
 2) Select the type of exercise you want to perform. (Look above for the supported exercises)
 3) Run the `GymLyitcs.py` file with your current configuration
 
-## Running the code 🐉
+## Execution 🐉
 
 ```
 python3 GymLytics.py --type pushup --source resources/push_aks.mov

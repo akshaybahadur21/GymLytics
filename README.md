@@ -42,8 +42,11 @@ python3 GymLytics.py --type pushup --source resources/push_aks.mov
 ```
 
 ## Results 📊
+<div align="center">
 
-<img src="https://github.com/akshaybahadur21/BLOB/blob/master/gym_squats.gif">
+
+<img src="https://github.com/akshaybahadur21/BLOB/blob/master/gym_squats.gif" width=400>
+</div>
 
 ## References 🔱
  
